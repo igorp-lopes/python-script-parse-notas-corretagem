@@ -8,3 +8,8 @@ def get_inputs_folder():
 
 def get_outputs_folder():
     return str(get_root_folder()) + "/outputs"
+
+def get_input_files():
+    inputs_folder = Path(get_inputs_folder())
+    return list(inputs_folder.glob('*.pdf'))
+
