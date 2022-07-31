@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 pymupdf = "*"
 pandas = "*"
+python-dateutil = "*"
+more-itertools = "*"
 
 [dev-packages]
 
