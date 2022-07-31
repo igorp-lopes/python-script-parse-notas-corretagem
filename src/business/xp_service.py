@@ -1,9 +1,19 @@
 from more_itertools import collapse
 
-from business.pdf_service import extract_text_from_block, \
+from business.pdf_service import extract_blocks_from_page, get_pdf_pages, extract_text_from_block, \
     get_block_index_by_matching_text
 from core.constants import STOCKS_REGEX, XP_POSSIBLE_OBS_COLUMN_VALUES
 from core.utils import extract_date_from_string, extract_from_string_using_regex
+
+
+def extract_data_from_xp_pdf(pdf):
+    if not is_xp_pdf(pdf):
+        return
+
+    for page in get_pdf_pages(pdf):
+        page_blocks = extract_blocks_from_page(page)
+        date = get_operation_date(page_blocks)
+        table_rows, table_data = get_table_data(get_table_blocks(page_blocks))
 
 
 def get_table_data(table_blocks):
