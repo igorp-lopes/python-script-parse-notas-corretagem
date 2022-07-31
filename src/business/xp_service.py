@@ -2,7 +2,17 @@ from more_itertools import collapse
 
 from business.pdf_service import extract_text_from_block, \
     get_block_index_by_matching_text
-from core.utils import extract_date_from_string
+from core.constants import STOCKS_REGEX, XP_POSSIBLE_OBS_COLUMN_VALUES
+from core.utils import extract_date_from_string, extract_from_string_using_regex
+
+
+def get_table_data(table_blocks):
+    header = get_table_headers(table_blocks[0])
+    table_blocks.pop(0)
+
+    rows_data = list(map(get_row_data, table_blocks))
+
+    return header, rows_data
 
 
 def get_table_headers(header_block):
@@ -15,6 +25,23 @@ def get_table_headers(header_block):
     headers = list(collapse(headers))
 
     return headers
+
+
+def get_row_data(row_block):
+    text = extract_text_from_block(row_block).split('\n')
+    stock = extract_from_string_using_regex(text[3], STOCKS_REGEX)
+    text[3] = stock
+    text = remove_obs_column(text)
+    del text[-1]
+    return text
+
+
+def remove_obs_column(row_text):
+    possible_obs_column = row_text[4]
+    if (possible_obs_column in XP_POSSIBLE_OBS_COLUMN_VALUES):
+        del row_text[4]
+
+    return row_text
 
 
 def get_table_blocks(all_blocks):
