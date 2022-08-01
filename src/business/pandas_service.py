@@ -4,6 +4,10 @@ from core.constants import OUTPUT_TABLE_FILENAME
 from core.directory_utils import get_outputs_folder
 
 
+def map_data_to_df(data):
+    return pd.DataFrame(data)
+
+
 def get_table_file():
     outputs_folder = get_outputs_folder()
     try:
