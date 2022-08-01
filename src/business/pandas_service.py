@@ -5,14 +5,24 @@ from core.directory_utils import get_outputs_folder
 
 
 def map_data_to_df(data):
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    df.rename(columns=df.iloc[0]).drop(df.index[0])
+
+    return df
 
 
 def get_table_file():
     outputs_folder = get_outputs_folder()
+    output_file_path = outputs_folder + '/' + OUTPUT_TABLE_FILENAME
     try:
-        df = pd.read_csv(outputs_folder + OUTPUT_TABLE_FILENAME)
+        df = pd.read_csv(output_file_path)
     except FileNotFoundError:
         df = pd.DataFrame()
 
     return df
+
+
+def save_extracted_data_to_csv(df):
+    outputs_folder = get_outputs_folder()
+    output_file_path = outputs_folder + '/' + OUTPUT_TABLE_FILENAME
+    df.to_csv(output_file_path)
