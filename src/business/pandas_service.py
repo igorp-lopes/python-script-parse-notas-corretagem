@@ -19,7 +19,7 @@ def export_data_to_csv(data):
 
 def map_data_to_df(data):
     df = pd.DataFrame(data)
-    df.rename(columns=df.iloc[0]).drop(df.index[0])
+    df = df.rename(columns=df.iloc[0]).drop(df.index[0])
 
     return df
 
