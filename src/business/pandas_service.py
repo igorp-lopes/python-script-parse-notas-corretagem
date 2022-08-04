@@ -4,6 +4,19 @@ from core.constants import OUTPUT_TABLE_FILENAME
 from core.directory_utils import get_outputs_folder
 
 
+def export_data_to_csv(data):
+    main_df = get_table_file()
+
+    data_to_be_added = pd.DataFrame()
+    for table in data:
+        new_df = map_data_to_df(table)
+        new_df = new_df.astype(str)
+        data_to_be_added = merge_dataframes(data_to_be_added, new_df)
+
+    main_df = merge_dataframes(main_df, data_to_be_added)
+    save_extracted_data_to_csv(main_df)
+
+
 def map_data_to_df(data):
     df = pd.DataFrame(data)
     df.rename(columns=df.iloc[0]).drop(df.index[0])
