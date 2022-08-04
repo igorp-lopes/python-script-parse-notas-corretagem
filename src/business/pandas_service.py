@@ -11,6 +11,16 @@ def map_data_to_df(data):
     return df
 
 
+def merge_dataframes(df1, df2):
+    if df1.empty:
+        return df2
+
+    if df2.empty:
+        return df1
+
+    return pd.merge(df1, df2)
+
+
 def get_table_file():
     outputs_folder = get_outputs_folder()
     output_file_path = outputs_folder + '/' + OUTPUT_TABLE_FILENAME
