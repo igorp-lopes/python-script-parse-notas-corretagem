@@ -38,7 +38,7 @@ def get_table_file():
     outputs_folder = get_outputs_folder()
     output_file_path = outputs_folder + '/' + OUTPUT_TABLE_FILENAME
     try:
-        df = pd.read_csv(output_file_path)
+        df = pd.read_csv(output_file_path, index_col=0).astype(str)
     except FileNotFoundError:
         df = pd.DataFrame()
 
