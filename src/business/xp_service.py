@@ -10,10 +10,13 @@ def extract_data_from_xp_pdf(pdf):
     if not is_xp_pdf(pdf):
         return
 
+    pdf_tables = []
+
     for page in get_pdf_pages(pdf):
         page_blocks = extract_blocks_from_page(page)
         date = get_operation_date(page_blocks)
-        table_rows, table_data = get_table_data(get_table_blocks(page_blocks))
+        table = get_table_data(get_table_blocks(page_blocks), date)
+        pdf_tables.append(table)
 
 
 
@@ -23,7 +26,7 @@ def get_table_data(table_blocks, table_date):
 
     rows_data = [get_row_data(row, table_date) for row in table_blocks]
 
-    return header, rows_data
+    return [headers, *rows_data]
 
 
 def get_table_headers(header_block):
