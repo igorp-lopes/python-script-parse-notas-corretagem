@@ -49,6 +49,7 @@ def get_row_data(row_block):
     text[3] = stock
     text = remove_obs_column(text)
     del text[-1]
+    text.append("XP INVESTIMENTOS")
     return text
 
 
