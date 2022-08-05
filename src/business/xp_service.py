@@ -31,8 +31,14 @@ def get_table_headers(header_block):
 
     headers[2] = headers[2].split(' ', 1)
     headers[5] = headers[5].split('(*)')
-    headers.pop()
     headers = list(collapse(headers))
+    del headers[-1]
+    del headers[0]
+    headers[0] = headers[0].replace('Q ', '')
+    headers.remove('Obs. ')
+    headers.remove('Prazo')
+
+    headers.append('Broker')
 
     return headers
 
