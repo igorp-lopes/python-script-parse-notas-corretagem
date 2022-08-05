@@ -1,5 +1,6 @@
 from more_itertools import collapse
 
+from business.pandas_service import export_data_to_csv
 from business.pdf_service import extract_blocks_from_page, get_pdf_pages, extract_text_from_block, \
     get_block_index_by_matching_text
 from core.constants import STOCKS_REGEX, XP_POSSIBLE_OBS_COLUMN_VALUES
@@ -10,19 +11,24 @@ def extract_data_from_xp_pdf(pdf):
     if not is_xp_pdf(pdf):
         return
 
+    pdf_tables = []
+
     for page in get_pdf_pages(pdf):
         page_blocks = extract_blocks_from_page(page)
         date = get_operation_date(page_blocks)
-        table_rows, table_data = get_table_data(get_table_blocks(page_blocks))
+        table = get_table_data(get_table_blocks(page_blocks), date)
+        pdf_tables.append(table)
+
+    export_data_to_csv(pdf_tables)
 
 
-def get_table_data(table_blocks):
-    header = get_table_headers(table_blocks[0])
+def get_table_data(table_blocks, table_date):
+    headers = get_table_headers(table_blocks[0])
     table_blocks.pop(0)
 
-    rows_data = list(map(get_row_data, table_blocks))
+    rows_data = [get_row_data(row, table_date) for row in table_blocks]
 
-    return header, rows_data
+    return [headers, *rows_data]
 
 
 def get_table_headers(header_block):
@@ -31,18 +37,27 @@ def get_table_headers(header_block):
 
     headers[2] = headers[2].split(' ', 1)
     headers[5] = headers[5].split('(*)')
-    headers.pop()
     headers = list(collapse(headers))
+    del headers[-1]
+    del headers[0]
+    headers[0] = headers[0].replace('Q ', '')
+    headers.remove('Obs. ')
+    headers.remove('Prazo')
+
+    headers.append('Broker')
+    headers.insert(0, 'Data')
 
     return headers
 
 
-def get_row_data(row_block):
+def get_row_data(row_block, date):
     text = extract_text_from_block(row_block).split('\n')
     stock = extract_from_string_using_regex(text[3], STOCKS_REGEX)
     text[3] = stock
     text = remove_obs_column(text)
     del text[-1]
+    text.append("XP INVESTIMENTOS")
+    text.insert(0, date)
     return text
 
 
@@ -68,4 +83,5 @@ def is_xp_pdf(pdf):
 def get_operation_date(blocks):
     date_block = list(
         filter(lambda block: extract_date_from_string(extract_text_from_block(block)) is not None, blocks))
-    return extract_date_from_string(extract_text_from_block(date_block[1]))
+    date = extract_date_from_string(extract_text_from_block(date_block[1]))
+    return date.strftime("%d/%m/%Y")
