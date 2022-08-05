@@ -1,5 +1,6 @@
 from more_itertools import collapse
 
+from business.pandas_service import export_data_to_csv
 from business.pdf_service import extract_blocks_from_page, get_pdf_pages, extract_text_from_block, \
     get_block_index_by_matching_text
 from core.constants import STOCKS_REGEX, XP_POSSIBLE_OBS_COLUMN_VALUES
@@ -18,6 +19,7 @@ def extract_data_from_xp_pdf(pdf):
         table = get_table_data(get_table_blocks(page_blocks), date)
         pdf_tables.append(table)
 
+    export_data_to_csv(pdf_tables)
 
 
 def get_table_data(table_blocks, table_date):
